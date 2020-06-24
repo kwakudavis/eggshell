@@ -124,6 +124,7 @@ void  stripSpaces(char* string){
         }
     }
 
-    //Update string 
+    //Update string
     strncpy(string, stringBuffer, variableSize);
+
 }

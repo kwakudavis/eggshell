@@ -38,7 +38,6 @@ void  stripSpaces(char* string);
 
 
 
-
 #endif //EGGSHELL_VARIABLEHANDLER_H
 
 

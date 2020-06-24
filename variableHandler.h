@@ -1,0 +1,8 @@
+//
+// Created by davis on 6/24/20.
+//
+
+#ifndef EGGSHELL_VARIABLEHANDLER_H
+#define EGGSHELL_VARIABLEHANDLER_H
+
+#endif //EGGSHELL_VARIABLEHANDLER_H

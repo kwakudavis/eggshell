@@ -1,0 +1,8 @@
+//
+// Created by davis on 6/24/20.
+//
+
+#ifndef EGGSHELL_STRINGPARSER_H
+#define EGGSHELL_STRINGPARSER_H
+
+#endif //EGGSHELL_STRINGPARSER_H

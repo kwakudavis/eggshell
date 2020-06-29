@@ -1,8 +1,0 @@
-//
-// Created by davis on 6/27/20.
-//
-
-#ifndef EGGSHELL_PROCESSMANAGER_H
-#define EGGSHELL_PROCESSMANAGER_H
-
-#endif //EGGSHELL_PROCESSMANAGER_H

@@ -11,7 +11,7 @@
 #define noOfVariables 8
 #define variableSize 512
 
-struct variables { char key[variableSize], value[variableSize] };
+struct variables { char key[variableSize], value[variableSize]; };
 struct variables ** variablesContainer;
 int variableCount;
 

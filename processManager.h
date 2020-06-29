@@ -17,6 +17,5 @@ void removeLastProc();
 //Remove process by process ID
 void removeBYPID(int PID);
 
-
 //Wait until child process is terminated
 void waitForChildProc();

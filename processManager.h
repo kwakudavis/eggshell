@@ -13,7 +13,6 @@ int getLastProc();
 //Remove last process
 void removeLastProc();
 
-
 //Remove process by process ID
 void removeBYPID(int PID);
 

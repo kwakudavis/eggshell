@@ -26,7 +26,8 @@ void sourceCommand(char* filename, void recursiveCallbackFunc(char* lineString))
 void showenvCommand();
 
 
-
+//executes the unset command
+void unsetCommand(char* variableName);
 
 
 

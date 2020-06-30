@@ -42,7 +42,7 @@ void showenvCommand(){
 //Update content of variable
 void updateVarCommand(char* lineString){
 
-    char * variableUpdateBuffer[2];
+    char* variableUpdateBuffer[2];
 
     //Parse string to get content of variable
     parseStringByChar(lineString, "=", variableUpdateBuffer);
@@ -73,11 +73,12 @@ void updateVarCommand(char* lineString){
     if (variableValues[1][0] == '$'){
         strncpy(variableValues[1], stripFirstCharacter(variableValues[1]), variableSize);
 
-        if (getVariable(variableValues[1]) == NULL){//IF variable does not exist, return an error
-          printf("Error:Variable not found");
-            return;
-        }else{
+        if (getVariable(variableValues[1]) != NULL){//IF variable does not exist, return an error
             strncpy(variableValues[1], getVariable(variableValues[1]), variableSize);
+
+        }else{
+            printf("Error:Variable not found");
+            return;
         }
 
     }
@@ -86,41 +87,60 @@ void updateVarCommand(char* lineString){
 }
 
 
+void unsetCommand(char* variableName){
+
+
+    for(int i = 0; i < variableCount; i++){
+        if(strncmp(variablesContainer[i]->key, variableName, variableSize) == 0){
+
+            strncpy(variablesContainer[i]->value, "", variableSize);
+        }
+    }
+
+
+
+}
+
+
+
 
 
 //Executes source command
 void sourceCommand(char* filename, void recursiveCallbackFunc(char* lineString)){
+  if(filename != NULL) {//if file name is NULL return error
 
-        if(filename == NULL){//if file name is NULL return error
-            fprintf(stderr, "Invalid file name\n");
-        }else{
+      FILE *fp;
+      //Load file and read file content
+      char fileName[variableSize];
 
-            FILE *fp
-                //Load file and read file content
-            char fileName[variableSize];
 
-            strncpy(fileName, getVariable("CWD"), variableSize);
+      strncpy(fileName, getVariable("CWD"), variableSize);
 
-            strncat(fileName, "/", variableSize);
 
-            strncat(fileName, filename, variableSize);
+      strncat(fileName, "/", variableSize);
 
-            if((fp = fopen(fileName, "r"))){
+      strncat(fileName, filename, variableSize);
 
-                char funcPtr[variableSize];
-                    //Execute each line
-                for(int j= 0; fgets(funcPtr, variableSize, fp); j++){
-                    funcPtr[strlen(funcPtr)-1] = '\0';
-                    recursiveCallbackFunc(funcPtr);
-                }
+      if (!(fp = fopen(fileName, "r"))) {
+          fprintf(stderr, "Error: file not found\n");
 
-            }else{
-                fprintf(stderr, "Error: file not found\n");
-            }
 
-            fclose(fp);
+      } else {
 
-        }
+          char funcPtr[variableSize];
+          //Execute each line
+          for (int j = 0; fgets(funcPtr, variableSize, fp); j++) {
+              funcPtr[strlen(funcPtr) - 1] = '\0';
+              recursiveCallbackFunc(funcPtr);
+          }
+          fclose(fp);
+
+      }
+
+      }else{
+         fprintf(stderr, "Invalid of NULL file name\n");
+
+       }
 
 
 }
@@ -149,8 +169,9 @@ void forkChildCommand(char** Args, int* pipeInput, int* pipeOutput, bool readPip
 
 
     pid_t cPID = fork();
-    char execPaths[variableSize]; //Holds executable paths
+    char *execPaths[variableSize]; //Holds executable paths
     char execPathHelper[variableSize]; //supports the exec path Array
+    char tempPath[variableSize];
 
     if (cPID > 0) {
 
@@ -164,9 +185,11 @@ void forkChildCommand(char** Args, int* pipeInput, int* pipeOutput, bool readPip
         signal(SIGINT, SIG_IGN);
         signal(SIGTSTP, SIG_IGN);
 
-        strncpy(execPaths, getVariable("CWD"), variableSize);
-        strncat(execPaths, ":", variableSize);
-        strncat(execPaths, getVariable("PATH"), variableSize);
+        strncpy(execPathHelper, getVariable("CWD"), variableSize);
+        strncat(execPathHelper, ":", variableSize);
+        strncat(execPathHelper, getVariable("PATH"), variableSize);
+
+        parseStringByChar(execPathHelper, ":", execPaths);
 
 
 
@@ -176,11 +199,11 @@ void forkChildCommand(char** Args, int* pipeInput, int* pipeOutput, bool readPip
 
         for (int i = 0; execPaths[i] != NULL; i++) {
 
-            strncpy(execPathHelper, execPaths[i], variableSize);
-            strncat(execPathHelper, "/", variableSize);
-            strncat(execPathHelper, Args[0], variableSize);
+            strncpy(tempPath, execPaths[i], variableSize);
+            strncat(tempPath, "/", variableSize);
+            strncat(tempPath, Args[0], variableSize);
 
-            execPaths[i] = execPathHelper;
+            execPaths[i] = tempPath;
 
 
 
@@ -215,7 +238,7 @@ void echoCommand(char** Args){
     bool containsQoute = 0;
 
 
-    for (int i = 1; Args[i] != NULL ; ++i) {
+    for (int i = 1; Args[i] != NULL ; i++) {
 
         if(containsQoute == false){
 
@@ -227,7 +250,7 @@ void echoCommand(char** Args){
 
                 if(Args[i][0] == '"'){
                     containsQoute = true;
-                    for (int j = 0; Args[i][j] != '\0'; j++) {
+                    for (int j = 1; Args[i][j] != '\0'; j++) {
                         if ( Args[i][j] == '"' && Args[i][j+1] == '\0'){
 
                             containsQoute  = false;
@@ -259,7 +282,7 @@ void echoCommand(char** Args){
 
                 char ss[variableSize];
 
-                for (int k = 0; Args[i][k] != '\0' ; ++k) {
+                for (int k = 0; Args[i][k] != '\0' ; k++) {
 
                     if (Args[i][k] == '"' && Args[i][k+1] == '\0'){
                        containsQoute = false;
@@ -270,7 +293,7 @@ void echoCommand(char** Args){
                     ss[k] = Args[i][k];
                 }
 
-                if (Args[i+1 == NULL]){
+                if (Args[i+1] == NULL){
                     printf("%s", ss);
                 }else{
                     printf("%s", ss);
@@ -282,14 +305,5 @@ void echoCommand(char** Args){
         }
                 printf("\n");
     }
-
-
-
-
-
-
-
-
-
 
 }

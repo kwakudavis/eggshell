@@ -56,7 +56,7 @@ void parseStringByString(char* string, char* delimiter, char** args){
                     retArgsBuffer[newString][newStringIndex] = '\0';
                     newString++;
                     retArgsBuffer[newString][0] = '\0';
-                    newStringIndex--;
+                    newStringIndex = -1;
                 }
                 currChar += j;
                 continue;
@@ -66,7 +66,7 @@ void parseStringByString(char* string, char* delimiter, char** args){
 
     retArgsBuffer[newString][newStringIndex] = '\0';
 
-    retArgsBuffer[newString++][0] = '\0';
+    retArgsBuffer[newString+1][0] = '\0';
 
     for(int k = 0; retArgsBuffer[k][0] != '\0'; k++){
         stripSpaces(retArgsBuffer[k]);

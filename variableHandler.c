@@ -11,20 +11,22 @@ void setVariable(char* variableName, char* value){
 
     //iterate variable container to update variable if variable already exists
 
-    for(int j=variableCount; variableCount>0; j--){
+    for(int j=0; j<variableCount; j++){
         if(strncmp(variablesContainer[j]->key, variableName, variableSize) == 0){
             strncpy(variablesContainer[j]->value, value, variableSize);
                 return;
         }
     }//create a new variable if variable does not exist already
 
+
     //increment size of container to accommodate new variable
-    variablesContainer = realloc(variablesContainer, variableCount++ * sizeof(struct variables**));
-    variablesContainer[variableCount--]= malloc(sizeof(struct variables));
+    variableCount++;
+    variablesContainer = realloc(variablesContainer, variableCount * sizeof(struct variables**));
+    variablesContainer[variableCount-1]= malloc(sizeof(struct variables));
 
     //set Key and value of variable
-    strncpy(variablesContainer[variableCount--]->key, value, variableSize);
-    strncpy(variablesContainer[variableCount--]->value, value, variableSize);
+    strncpy(variablesContainer[variableCount-1]->key, variableName, variableSize);
+    strncpy(variablesContainer[variableCount-1]->value, value, variableSize);
 }
 
 
@@ -32,11 +34,13 @@ void setVariable(char* variableName, char* value){
 char* getVariable(char* variableName){
 
     //Traverse through variable container to find variable if it exists in the variables array
-    for(int j=variableCount; variableCount>0; j--){
+    for(int j = 0; j < variableCount; j++){
         if(strncmp(variablesContainer[j]->key, variableName, variableSize) == 0){
             return variablesContainer[j]->value;
+
         }
     } //else return NULL
+
     return NULL;
 
 }
@@ -60,32 +64,40 @@ char* stripFirstCharacter(char* string){
 //Sets up the Terminal, CWD and SHELL variables on initialisation
 void initializeVariables(char* shellName){
 
+    //Set CWD variable if its not NULL
+    char CWDBuffer[variableSize];
+   if(getcwd(CWDBuffer, variableSize) == NULL){
+        perror("Unable to fetch current working directory");
+        exit(-1);
+
+    }  else{//Print error if its NULL
+
+
+        setVariable("CWD",CWDBuffer);
+
+           //extract shell name from CWD variable
+           char shellBuffer[variableSize];
+        strncpy(shellBuffer, getVariable("CWD"), variableSize);
+        // strncat(shellBuffer,stripFirstCharacter(shellName), variableSize);
+        // setVariable("SHELL", shellName);
+
+
+       }
+
+
+
+
     //Set up Terminal variable if its not null, else return an error.
-    if(ttyname(STDIN_FILENO) != NULL){
-        setVariable("TERMINAL", ttyname(STDIN_FILENO));
-    }else{
+    if(ttyname(STDIN_FILENO) == NULL){
+
         perror("Unable to fetch ttyname with ERROR: ");
         exit(atoi(getVariable("EXITCODE")));
+
+
+    }else{
+        setVariable("TERMINAL", ttyname(STDIN_FILENO));
     }
 
-
-
-     //Set CWD variable if its not NULL
-     char CWDBuffer[variableSize];
-     if(getcwd(CWDBuffer, variableSize) != NULL){
-         setVariable("CWD",CWDBuffer);
-
-         //extract shell name from CWD variable
-         char shellBuffer[variableSize];
-         strncpy(shellBuffer, getVariable("CWD"), variableSize);
-         char* shellName = stripFirstCharacter(shellName);
-         strncat(shellBuffer, shellName, variableSize);
-         setVariable("SHELL", shellName);
-
-     }else{//Print error if its NULL
-         perror("Unable to fetch current working directory");
-         exit(-1);
-     }
 
 
 }
@@ -116,7 +128,7 @@ void  stripSpaces(char* string){
     stringBuffer[count] = '\0';
 
     //Replace end spaces with "\0"
-    for(int j = count--; j >= 0; j-- ){
+    for(int j = count-1; j >= 0; j-- ){
         if (stringBuffer[j] == ' '){
             stringBuffer[j] = '\0';
         }else{

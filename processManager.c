@@ -13,7 +13,7 @@ void addProc(int PID){
 
     processCount++;
     procs =realloc(procs, processCount * sizeof(int)); //increase memory allocation to accommodate new process
-    procs[processCount--] = PID; //update new process with PID
+    procs[processCount-1] = PID; //update new process with PID
 
 }
 
@@ -23,7 +23,7 @@ void addProc(int PID){
 //Get process ID of tje last process
 int getLastProc(){
 
-    return procs[processCount--];
+    return procs[processCount-1];
 
 }
 
@@ -49,12 +49,13 @@ void removeBYPID(int PID){
          if (procs[j] == PID){
              while (j<processCount){
                  procs[j] = procs[j+1]; //shift processes forward
-                 procs++;
+                 j++;
              }
+
+          removeLastProc();
+             return;
+
          }
-
-
-        j++;
     }
 }
 

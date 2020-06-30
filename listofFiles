@@ -1,0 +1,17 @@
+cmake-build-debug.2
+CMakeLists.txt
+commandsHandler.c
+commandsHandler.h
+eggshell
+LICENSE
+linenoise.c
+linenoise.h
+listofFiles
+main.c
+processManager.c
+processManager.h
+README.md
+stringParser.c
+stringParser.h
+variableHandler.c
+variableHandler.h
